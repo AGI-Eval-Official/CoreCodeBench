@@ -1,0 +1,145 @@
+{
+    "transformers":   
+    {
+        "repo_name": "transformers",
+        "import_name": "transformers",
+        "github_url": "https://github.com/huggingface/transformers",
+        "conda_env_name": "sandbox",
+        "repo_path": "Source_Copy/transformers/",
+        "_running_path": "/src/",
+        "_src_path": "/src/transformers/",
+        "_test_path": "/tests/"
+    },
+    "langchain":
+    {
+        "repo_name": "langchain",
+        "import_name": "langchain",
+        "github_url": "https://github.com/langchain-ai/langchain",
+        "conda_env_name": "langchain",
+        "repo_path": "Source_Copy/langchain/",
+        "_running_path": "/libs/langchain/",
+        "_src_path": "/libs/langchain/langchain/",
+        "_test_path": "/libs/langchain/tests/unit_tests/"
+    },
+    "langchain_core":
+    {
+        "repo_name": "langchain",
+        "import_name": "langchain_core",
+        "github_url": "https://github.com/langchain-ai/langchain",
+        "conda_env_name": "langchain",
+        "repo_path": "Source_Copy/langchain/",
+        "_running_path": "/libs/core/",
+        "_src_path": "/libs/core/langchain_core/",
+        "_test_path": "/libs/core/tests/unit_tests/"
+    },
+    "datachain":
+    {
+        "repo_name": "datachain",
+        "import_name": "datachain",
+        "github_url": "https://github.com/iterative/datachain/tree/main",
+        "conda_env_name": "datachain",
+        "repo_path": "Source_Copy/datachain/",
+        "_running_path": "/src/",
+        "_src_path": "/src/datachain/",
+        "_test_path": "/tests/unit/"
+    },
+    "open-iris":
+    {
+        "repo_name": "open-iris",
+        "import_name": "iris",
+        "github_url": "https://github.com/worldcoin/open-iris",
+        "conda_env_name": "iris",
+        "repo_path": "Source_Copy/open-iris/",
+        "_running_path": "/src/",
+        "_src_path": "/src/iris/",
+        "_test_path": "/tests/unit_tests/"
+    },
+    "UniRef":
+    {
+        "repo_name": "UniRef",
+        "import_name": "detectron2",
+        "github_url": "https://github.com/FoundationVision/UniRef",
+        "conda_env_name": "uniref",
+        "repo_path": "Source_Copy/UniRef/",
+        "_running_path": "/",
+        "_src_path": "/detectron2/",
+        "_test_path": "/tests/"
+    },
+    "haystack":
+    {
+        "repo_name": "haystack",
+        "import_name": "haystack",
+        "github_url": "https://github.com/deepset-ai/haystack",
+        "conda_env_name": "haystack",
+        "repo_path": "Source_Copy/haystack/",
+        "_running_path": "/",
+        "_src_path": "/haystack/",
+        "_test_path": "/test/"
+    },
+    "d3rlpy":
+    {
+        "repo_name": "d3rlpy",
+        "import_name": "d3rlpy",
+        "github_url": "https://github.com/takuseno/d3rlpy",
+        "conda_env_name": "d3rlpy",
+        "repo_path": "Source_Copy/d3rlpy/",
+        "_running_path": "/",
+        "_src_path": "/d3rlpy/",
+        "_test_path": "/tests_copy/"
+    },
+    "inference":
+    {
+        "repo_name": "inference",
+        "import_name": "inference",
+        "github_url":"https://github.com/roboflow/inference",
+        "conda_env_name":"inference", 
+        "repo_path": "Source_Copy/inference/",
+        "_running_path": "/",
+        "_src_path": "/inference/",
+        "_test_path": "/tests/inference/unit_tests/"
+    },
+    "rdt":
+    {
+        "repo_name": "rdt",
+        "import_name": "rdt",
+        "github_url":"https://github.com/sdv-dev/RDT",
+        "conda_env_name":"rdt", 
+        "repo_path": "Source_Copy/rdt/",
+        "_running_path": "/",
+        "_src_path": "/rdt/",
+        "_test_path": "/tests/unit/"
+    },
+    "cloudnetpy":
+    {
+        "repo_name": "cloudnetpy",
+        "import_name": "cloudnetpy",
+        "github_url":"https://github.com/actris-cloudnet/cloudnetpy",
+        "conda_env_name":"cloudnetpy", 
+        "repo_path": "Source_Copy/cloudnetpy/",
+        "_running_path": "/",
+        "_src_path": "/cloudnetpy/",
+        "_test_path": "/tests/unit/"
+    },
+    "skfolio":
+    {
+        "repo_name": "skfolio",
+        "import_name": "skfolio",
+        "github_url":"https://github.com/skfolio/skfolio",
+        "conda_env_name":"skfolio", 
+        "repo_path": "Source_Copy/skfolio/",
+        "_running_path": "/src/",
+        "_src_path": "/src/skfolio/",
+        "_test_path": "/tests/"
+    },
+    "finam":
+    {
+        "repo_name": "finam",
+        "import_name": "finam",
+        "github_url":"https://github.com/finam-ufz/finam",
+        "conda_env_name":"finam", 
+        "repo_path": "Source_Copy/finam/",
+        "_running_path": "/src/",
+        "_src_path": "/src/finam/",
+        "_test_path": "/tests/"
+    }
+}
