@@ -14,6 +14,13 @@ import subprocess
 import logging
 import re
 
+
+def set_max_memory():
+    import resource
+    # 限制最大内存为10GB
+    limit = 10 * 1024 * 1024 * 1024  # 10GB in bytes
+    resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
+
 global TIMEOUT
 TIMEOUT = 120
 
@@ -55,9 +62,11 @@ def evaluate_gen_code(id, pytest_info, repo_name, origin_file, test_path_list, t
         env['PYTHONPATH'] = tmp_running_path
         with open(log_file, 'w') as f:
             try:
-                subprocess.run(cmd, env=env, stdout=f, stderr=subprocess.STDOUT, timeout=TIMEOUT)
+                subprocess.run(cmd, env=env, stdout=f, stderr=subprocess.STDOUT, timeout=TIMEOUT, preexec_fn=set_max_memory)
             except subprocess.TimeoutExpired:
                 f.write(f"Timeout: {TIMEOUT}s\n")
+            except Exception as e:
+                f.write(f"Error: {e}\n")
         passed, skipped, failed = utils.read_log(log_file)
         passed_list.append(passed) 
         skipped_list.append(skipped)
@@ -137,7 +146,7 @@ if __name__ == "__main__":
                 typ = match.group(1)
                 id = match.group(2)
             else:
-                logging.error(f"Invalid line ID: {line_id}")
+                logging.error(f"Invalid line ID: {line['ID']}")
                 sys.exit(1)
             if typ in args.type and line['repo_name'] == args.repo_name:
                 result_dict[typ][id] = line

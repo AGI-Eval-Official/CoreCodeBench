@@ -14,6 +14,7 @@ import tempfile
 import shutil
 from config import testcase_path, root_path, multi_testcases_path, single_testcases_path, func_empty_testcases_path
 import logging
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,16 @@ if not temp_copy_path.endswith(os.sep):
 
 logger.info("copy_finished, temp_copy_path: ", temp_copy_path)
 
+
+def set_max_memory():
+    import resource
+    # 限制最大内存为10GB
+    limit = 10 * 1024 * 1024 * 1024  # 10GB in bytes
+    resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
+
 def remove_common_prefix(str1, str2):
+    if len(str1) == 0 or len(str2) == 0:
+        return str1
     if str1.startswith(str2):
         if str1[len(str2)] == '\n':
             return str1[len(str2)+1:]
@@ -217,10 +227,18 @@ def test_func(problem_type, repo_name, testcase, tmp_repo_path):
             if not os.path.exists(result_log_dir):
                 os.makedirs(result_log_dir)
             test_file_path = test_path.replace("/", "-")
-            log_dir = os.path.join(result_log_dir, f"{ID}_{test_file_path}.log")
-            BASH = f'''PYTHONPATH={running_path} timeout {TIMEOUT} pytest {tmp_test_path} --tb=long > {log_dir} 2>&1'''
-            print(BASH)
-            os.system(BASH)
+            log_name = problem_type + "-" + ID.replace(".", "_")[:200]+'_'+str(idx)
+            log_dir = os.path.join(result_log_dir, f"{log_name}.log")
+            cmd = ['pytest', tmp_test_path, '--tb=long']
+            env = os.environ.copy()
+            env['PYTHONPATH'] = running_path
+            with open(log_dir, 'w') as f:
+                try:
+                    subprocess.run(cmd, env=env, stdout=f, stderr=subprocess.STDOUT, preexec_fn=set_max_memory, timeout=TIMEOUT)
+                except subprocess.TimeoutExpired:
+                    f.write(f"Timeout: {TIMEOUT}s\n")
+                except Exception as e:
+                    f.write(f"Error: {e}\n")
             if os.path.exists(log_dir):
                 passed, skipped, failed = utils.read_log(log_dir)
             else:
@@ -251,8 +269,8 @@ def test_func(problem_type, repo_name, testcase, tmp_repo_path):
             "passed": 0,
             "skipped": 0,
             "failed": 0,
-            "pass_rate": 0,
             "pass_all": 0,
+            "pass_rate": 0,
             "base_passed_num": pytest_info['base_passed_num'],
             "total_num": pytest_info['total_num']
         }

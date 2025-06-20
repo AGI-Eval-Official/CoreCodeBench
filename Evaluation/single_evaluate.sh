@@ -151,12 +151,3 @@ conda_env="${repo_env_map['transformers']}"
 conda run -p $NASCONDA/$conda_env python get_results.py --model $model --output_dir $output_dir
 
 echo "Script execution completed."
-
-# 在脚本末尾添加
-if [ -f "${log_dir}/evaluate_open-iris.log" ]; then
-    echo "=== open-iris 错误日志内容 ==="
-    tail -20 "${log_dir}/evaluate_open-iris.log"  # 显示最后 20 行
-    echo "==========================="
-fi
-
-# /mnt/dolphinfs/hdd_pool/docker/user/hadoop-aipnlp/fulingyue/miniconda3/bin/conda

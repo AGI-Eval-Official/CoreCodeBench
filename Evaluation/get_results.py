@@ -7,8 +7,8 @@ import config
 
 def setup_arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='gpt4o', help='model to evaluate')
-    parser.add_argument('--output_dir', type=str, default='/home/hadoop-aipnlp/dolphinfs_hdd_hadoop-aipnlp/fulingyue/AutoCoderBench/CoreCodeBench', help='Output directory for results')
+    parser.add_argument('--model', type=str, default='gpt-4o2', help='model to evaluate')
+    parser.add_argument('--output_dir', type=str, default='/mnt/dolphinfs/hdd_pool/docker/user/hadoop-aipnlp/EVA/fulingyue/AutoCoderBench/CoreCodeBench', help='Output directory for results')
     return parser
 
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     }
 
     # Process single score csv
-    single_score_path = os.path.join(results_dir, 'single_score.csv')
+    single_score_path = os.path.join(results_dir, 'single_scores.csv')
     if os.path.exists(single_score_path):
         df = pd.read_csv(single_score_path)
         single_scores["pass_rate"] = df["pass_rate"].mean()
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         single_scores["tdd_ac_rate"] = sum(tdd_ac_rates) / len(tdd_ac_rates) if tdd_ac_rates else 0.0
 
     # Process multi score csv  
-    multi_score_path = os.path.join(results_dir, 'multi_score.csv')
+    multi_score_path = os.path.join(results_dir, 'multi_scores.csv')
     if os.path.exists(multi_score_path):
         df = pd.read_csv(multi_score_path)
         multi_scores["pass_rate"] = df["pass_rate"].mean()

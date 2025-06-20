@@ -200,7 +200,7 @@ def test_func(problem_type, repo_name, testcase):
     
     idq_list = {}
     not_idq_list = {}
-    source_code_path = []
+    source_code_path_list = []
     for index, name in enumerate(node):
         path = origin_file[index]
         path = os.path.join(repo_running_path, path)
@@ -213,7 +213,7 @@ def test_func(problem_type, repo_name, testcase):
             func_file = name.split(".")[-2] + "::" + name.split(".")[-1] + ".py"
         problem_id = os.path.join(repo_name, file_path, file_name, func_file).replace(".py", "").replace("/", ".")
         source_code_path = os.path.join(repo_path, file_path, f'{file_name}.py')
-        source_code_path.append(source_code_path)
+        source_code_path_list.append(source_code_path)
         with open(source_code_path, 'r') as f:
             source_code = f.read().splitlines()  
         if problem_id in set(id):
@@ -239,7 +239,7 @@ def test_func(problem_type, repo_name, testcase):
         'key_block_start_lineno': [prob_info[index]["func_start_lineno"] for index in range(len(prob_info))],
         'key_block_end_lineno': [prob_info[index]["func_end_lineno"] for index in range(len(prob_info))],
         'origin_file': origin_file,
-        "source_file": source_code_path,
+        "source_file": source_code_path_list,
     }
     # save_dict["response"] = completed_key_block_dict
     # save_dict["raw_response"] = response
