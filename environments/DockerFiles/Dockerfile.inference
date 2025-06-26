@@ -1,0 +1,25 @@
+# # 使用官方 Miniconda 镜像
+# FROM continuumio/miniconda3
+FROM jupyter/scipy-notebook:latest
+# 设置工作目录
+WORKDIR /app
+
+# 安装编译工具
+# 更新并安装编译工具，加入 --fix-missing
+# 安装 GDAL 和编译工具
+# RUN apt-get update && apt-get install -y --fix-missing \
+#     gdal-bin \
+#     libgdal-dev
+
+# 复制环境文件到容器中
+COPY CoreCodeBench-main/environments/inference.yml /app/inference.yml
+
+# 创建 Conda 环境并安装依赖
+RUN conda env create -f /app/inference.yml && \
+    conda clean --all -f -y
+
+# 使用 Conda 环境
+SHELL ["conda", "run", "-n", "inference", "/bin/bash", "-c"]
+
+# 默认启动时进入交互式 shell
+CMD ["conda", "run", "-n", "inference", "bash"]

@@ -1,5 +1,5 @@
 import os
-root_path = '/Users/fulingyue/Desktop/CoreCodeBench'
+root_path = '/workspace'
 repo_info_path= os.path.join(root_path, 'repo_info.json')
 testcase_path = os.path.join(root_path, "CoreCodeBench")
 single_testcases_path = os.path.join(testcase_path, "CoreCodeBench_Single.jsonl")

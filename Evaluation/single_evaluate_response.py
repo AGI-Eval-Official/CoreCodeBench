@@ -219,7 +219,7 @@ if __name__ == "__main__":
         args.type = ' '.join(args.type)
     
     if not os.path.exists(args.testcase_file):
-        print(f"{args.testcasefile} does not exist")
+        print(f"{args.testcase_file} does not exist")
         sys.exit(1)
     
     # loading testcases

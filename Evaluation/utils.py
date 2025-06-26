@@ -10,11 +10,6 @@ from tqdm import tqdm
 import time
 import config
 import sys
-from openai import OpenAI
-
-
-client = OpenAI(api_key="sk-2134105ebd374660963d161470cee3d4", base_url="https://api.deepseek.com/v1")
-
 
 def get_repo_args(repo_name):
     repo_info_path = config.repo_info_path
@@ -110,6 +105,10 @@ def extract_code_loose(content):
             return content  # If no code block, return the original string stripped of whitespace
 
 def get_response(chat_message, model, model_ip=None, gen_kwargs=None):
+    from openai import OpenAI
+    client = OpenAI(api_key="sk-2134105ebd374660963d161470cee3d4", base_url="https://api.deepseek.com/v1")
+
+
     if model == 'empty':
         return ''
     elif model == 'deepseek-chat':

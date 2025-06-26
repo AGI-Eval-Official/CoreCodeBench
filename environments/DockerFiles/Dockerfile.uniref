@@ -1,0 +1,28 @@
+# 使用官方 Miniconda 镜像
+FROM continuumio/miniconda3
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装编译工具
+# 更新并安装编译工具，加入 --fix-missing
+RUN apt-get update --fix-missing && apt-get install -y \
+    build-essential \
+    pkg-config \
+    libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0
+
+# 复制环境文件到容器中
+COPY CoreCodeBench-main/environments/UniRef.yml /app/UniRef.yml
+
+# 创建 Conda 环境并安装依赖
+RUN conda env create -f /app/uniref.yml && \
+    conda clean --all -f -y
+
+# 使用 Conda 环境
+SHELL ["conda", "run", "-n", "uniref", "/bin/bash", "-c"]
+
+# 默认启动时进入交互式 shell
+CMD ["conda", "run", "-n", "uniref", "bash"]

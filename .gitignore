@@ -1,3 +1,7 @@
 Source_Copy/
 few_shot/
 results/
+.DS_Store
+Evaluation/logs/
+logs/
+tmp_source/
