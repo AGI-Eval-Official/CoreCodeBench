@@ -166,7 +166,7 @@ def complete_code(new_code, id, origin_file, model, model_ip, test_path_list, re
         if get_token_length(prompt) > 64000:
             prompt = complete_code_bugfix(new_code)
         if get_token_length(prompt) > 64000:
-            prompt = complet_code_bugfix_short(new_code, log_file, test_code)
+            prompt = complet_code_bugfix_short(new_code)
         print(get_token_length(prompt))
         res = utils.get_response(prompt, model, model_ip)
         
