@@ -83,7 +83,6 @@ Code snippet:
     return chat_message
 
 def complet_code_bugfix_short(new_code):
-    print('Complete code bugfix short')
     start = new_code.find('<buggy code begin>')
     end = new_code.find('<buggy code end>') + len('<buggy code end>')
     
@@ -167,7 +166,6 @@ def complete_code(new_code, id, origin_file, model, model_ip, test_path_list, re
             prompt = complete_code_bugfix(new_code)
         if get_token_length(prompt) > 64000:
             prompt = complet_code_bugfix_short(new_code, log_file, test_code)
-        print(get_token_length(prompt))
         res = utils.get_response(prompt, model, model_ip)
         
 

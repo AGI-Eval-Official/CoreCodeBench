@@ -115,7 +115,7 @@ if __name__ == "__main__":
             if not repo_tdd_df.empty:
                 tdd_rates.append(repo_tdd_df["pass_rate"].mean())
                 tdd_ac_rates.append(repo_tdd_df["pass_all"].mean())
-            print(dev_rates)
+
         
         multi_scores["dev_pass_rate"] = sum(dev_rates) / len(dev_rates) if dev_rates else 0.0
         multi_scores["dev_ac_rate"] = sum(dev_ac_rates) / len(dev_ac_rates) if dev_ac_rates else 0.0

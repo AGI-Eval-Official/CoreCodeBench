@@ -42,8 +42,6 @@ fi
 
 repos=("d3rlpy" "finam" "inference" "langchain" "open-iris" "rdt" "skfolio" "uniref" "transformers" "langchain_core" "datachain" "haystack" "cloudnetpy")
 
-unset http_proxy
-unset https_proxy
 
 log_dir="logs"
 

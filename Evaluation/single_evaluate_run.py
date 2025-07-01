@@ -186,7 +186,6 @@ if __name__ == "__main__":
             pytest_info = testcase['pytest_info']
             if f'{typ}-{id}' in generated_testcases:
                 continue
-            print(id)
             evaluate_gen_code(id, pytest_info, args.repo_name, origin_file, test_path_list, temp_copy_path, response_line, log_dir, score_dir, args.model)
         logging.info(f"Evaluation for {args.repo_name}-{args.type} is finished!")
     
