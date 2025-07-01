@@ -2,7 +2,8 @@ FROM jupyter/scipy-notebook:latest
 WORKDIR /app
 
 COPY CondaYmls/ /app/CondaYmls/
-
+RUN export http_proxy=http://10.229.18.30:8412
+RUN export https_proxy=http://10.229.18.30:8412
 # RUN apt-get update --fix-missing && apt-get install -y \
 #     build-essential \
 #     gcc \
@@ -13,8 +14,6 @@ COPY CondaYmls/ /app/CondaYmls/
 #     libssl-dev
 # RUN apt-get update --fix-missing && apt-get install -y \
 #     clang
-
-
 
 # # 循环创建所有conda环境
 RUN conda env create -f /app/CondaYmls/inference.yml

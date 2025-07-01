@@ -12,14 +12,14 @@ WORKDIR /app
 #     libgdal-dev
 
 # 复制环境文件到容器中
-COPY CoreCodeBench-main/environments/inference.yml /app/inference.yml
+COPY environments/CondaYmls/inference.yml /app/inference.yml
 
 # 创建 Conda 环境并安装依赖
-RUN conda env create -f /app/inference.yml && \
-    conda clean --all -f -y
+# RUN conda env create -f /app/inference.yml && \
+   # conda clean --all -f -y
 
 # 使用 Conda 环境
-SHELL ["conda", "run", "-n", "inference", "/bin/bash", "-c"]
+# SHELL ["conda", "run", "-n", "inference", "/bin/bash", "-c"]
 
 # 默认启动时进入交互式 shell
-CMD ["conda", "run", "-n", "inference", "bash"]
+# CMD ["conda", "run", "-n", "inference", "bash"]

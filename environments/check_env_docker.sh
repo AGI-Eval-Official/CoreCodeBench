@@ -1,6 +1,6 @@
 # Usage example: bash check_env_docker.sh --repo_idx=2 --root_path=~/CoreCodeBench
-# 默认root_path为空
-root_path=""
+
+root_path="/workspace"
 
 repos=("cloudnetpy" "d3rlpy" "datachain" "finam" "haystack" "inference" "langchain" "open-iris" "rdt" "skfolio" "transformers" "uniref")
 

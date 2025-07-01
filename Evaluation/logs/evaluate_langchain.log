@@ -1,4 +1,3 @@
 
-  0%|          | 0/38 [00:00<?, ?it/s]
-100%|██████████| 38/38 [00:00<00:00, 236474.11it/s]
+EnvironmentLocationNotFound: Not a conda environment: /opt/conda/envs/langchain
 

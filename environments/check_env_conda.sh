@@ -1,4 +1,4 @@
-root_path="~/Desktop/CoreCodeBench"
+root_path="/workspace"
 
 repos=("cloudnetpy" "d3rlpy" "datachain" "finam" "haystack" "inference" "langchain" "open-iris" "rdt" "skfolio" "transformers" "uniref")
 
@@ -17,11 +17,16 @@ if [ -n "$REPO_IDX" ]; then
 fi
 
 echo "repos: $repos"
-
+ 
 for repo_name in "${repos[@]}"; do
     # check testcase number
     echo "checking environment.... repo_name: $repo_name"
-    conda run -n "$repo_name" python check_environment.py --repo_name $repo_name --root_path $root_path  2>&1
+    if [ "$repo_name" = "uniref" ]; then
+        repo_name_arg="UniRef"
+    else
+        repo_name_arg="$repo_name"
+    fi
+    conda run -n "$repo_name" python $root_path/environments/check_environment.py --repo_name $repo_name_arg --root_path $root_path  2>&1
     if [[ $? -ne 0 ]]; then
         echo "Execution failed for repo: $repo_name"
     else

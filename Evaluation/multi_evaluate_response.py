@@ -13,11 +13,9 @@ import argparse
 import traceback
 from tqdm import tqdm
 from config import testcase_path, root_path, multi_testcases_path, single_testcases_path, func_empty_testcases_path
-# TODO: 删去了repo_name需要判断project，删去了if_comments需要读取type字段判断
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='gpt4o', help='args.model')
-parser.add_argument('--model_ip', type=str, default="None", help='args.model_ip')
 parser.add_argument('--output_dir', type=str, default='/home/hadoop-aipnlp/dolphinfs_hdd_hadoop-aipnlp/fulingyue/AutoCoderBench/CoreCodeBench/', help='Output directory for results')
 parser.add_argument('--type', type=str, nargs='+', default=['Development', "TDD", "BugFix"], help='Specify types, e.g., Development, TDD, BugFixx')
 
@@ -72,7 +70,7 @@ def extract_code_blocks(text):
     code_dict = {match[0].strip(): match[1].lstrip('\n') for match in matches if match[0].strip() and "\n" not in match[0].strip()}
     return code_dict
 
-def complete_code(idq_list, not_idq_list, model, model_ip, problem_type, test_path_list, repo_path):
+def complete_code(idq_list, not_idq_list, model, problem_type, test_path_list, repo_path):
     code_seg = ""
     if not_idq_list:
         code_seg += """<related code>
@@ -132,7 +130,7 @@ The unit test information:
 {test_codes}
 '''
     # print(chat_message)
-    res = utils.get_response(chat_message, model=model, model_ip=model_ip)
+    res = utils.get_response(chat_message, model=model)
     return extract_code_blocks(res), res, chat_message
 
 def get_testcases(id, repo_name, problem_type):
@@ -229,7 +227,7 @@ def test_func(problem_type, repo_name, testcase):
             func_start_lineno, func_end_lineno = prob_info[index]["func_start_lineno"], prob_info[index]["func_end_lineno"]
             code = source_code[func_start_lineno:func_end_lineno]
             not_idq_list[name] = code
-    completed_key_block_dict, response, chat_message = complete_code(idq_list, not_idq_list, args.model, args.model_ip, problem_type, testcase["test_list"], repo_path)
+    completed_key_block_dict, response, chat_message = complete_code(idq_list, not_idq_list, args.model, problem_type, testcase["test_list"], repo_path)
     # save_dict = {"id": "-".join(["+".join(single_id.split(".")[-2:]) for single_id in id]), "project": repo_name, "raw_response": response, "type": problem_type, "response": completed_key_block_dict}
     save_dict = {
         'ID': ID,
