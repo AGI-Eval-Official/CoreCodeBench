@@ -97,7 +97,7 @@ def complete_code(idq_list, not_idq_list, model, problem_type, test_path_list, r
         chat_message = f'''
 If you were a code completion agent, I would provide you with a snippet of code, and you would need to return the completed code segment. 
 the code after <ralated code> is used while calling the code to be completed. 
-You need to completechat_message code blocks after <complete following code> by predicting the codes after <complete code here>, <id> label wraps the position of the code.
+You need to complete code blocks after <complete following code> by predicting the codes after <complete code here>, <id> label wraps the position of the code.
 Your output should include the <id></id> label, followed by the completed code snippet enclosed within triple backticks ```, ensuring clarity and proper formatting.
 {code_seg}
 '''
@@ -135,7 +135,6 @@ The unit test information:
 
 def get_testcases(id, repo_name, problem_type):
     testcases = {}
-    # TODO:, highlight fixed
     with open (single_testcases_path, "r") as testcase_file:
         for line in testcase_file:
             data = json.loads(line)

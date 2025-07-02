@@ -49,7 +49,8 @@ docker run -it -v /path/to/CoreCodeBench/:/workspace fulingyue/corecodebench:all
 
 3. To check docker environment, run the script
 ```
-bash /workspace/environments/check_env_conda.sh
+cd /workspace/environments
+bash check_env_conda.sh
 ```
 This will verify docker images availability, environment configuration, and basic setup.
 
@@ -57,7 +58,7 @@ This will verify docker images availability, environment configuration, and basi
 We also provide conda version environment setup. However, to prevent incompatibility issues across different operating systems, we still strongly recommend using Docker.
 
 1. Run `environments/all_env_create_conda.sh` to create conda environments.
-2. Run `environments/chec_env_conda.sh` and check conda environments.
+2. Run `environments/check_env_conda.sh` and check conda environments.
 
 
 > **Note**: If you encounter errors when checking the langchain environment, it may be due to outdated pytest snapshots. In this case, you'll need to update the snapshots by running `pytest --snapshot-update /workspace/path/to/failing/test/file` inside the Docker container.
@@ -69,7 +70,7 @@ The evaluation scripts are the same whether you use Docker or Conda environments
 #### Model Setup
 Before running evaluation, you need to implement how to get responses from your model in `Evaluation/utils.py`. Specifically:
 
-1. Add your model's response generation logic in the `get_response()` function.
+1. Add your model's response implementation in the `get_response()` function.
 2. The function should take the following parameters:
    - chat_message: Input prompt text
    - model: Name of your model
@@ -81,26 +82,48 @@ The example implementation for OpenAI API is already provided in the get_respons
 #### Single-Function Evaluation
 For single-function problems, run
 ```
-bash single_evaluate_conda.sh --model=model_name --types=Development,TDD,BugFix --output_dir=/workspace
+bash Evaluation/single_evaluate_conda.sh --model=model_name --types=Development,TDD,BugFix --output_dir=/workspace
 ```
 Supported problem types: Development, BugFix, TDD.
 You can run evaluation for a single problem type, for example:
 ```
-bash single_evaluate_conda.sh --model=model_name --types=Development --output_dir=/workspace --root_dir=/workspace
+bash Evaluation/single_evaluate_conda.sh --model=model_name --types=Development --output_dir=/workspace --root_dir=/workspace
 ```
 
 #### Multi-Function Evaluation
 For multi-function problems, run
 ```
-bash multi_evaluate_conda.sh --model=model_name --types=Development,TDD,BugFix --output_dir=/workspace  --root_dir=/workspace
+bash Evaluation/multi_evaluate_conda.sh --model=model_name --types=Development,TDD,BugFix --output_dir=/workspace  --root_dir=/workspace
 ```
 
+> After running scripts, you can find all **responses** and **test scores** in the output_dir/results/model_name directory.
 
 ### Generation of CorePipe
+
+![Framework](docs/Framework.pdf)
+
+
 #### Preprocess
+To build a new repository into 6 types of CoreCodeBench problems:
+
+1. Manually place the repository code into the Source_Copy folder
+
+2. Add basic repository information to repo_info.json, including:
+   - Repository name (Required)
+   - Import name (Required)
+   - Github URL (Optional)
+   - conda env name (Optional)
+   - Repo Path (Required)
+   - Running Path (Required): The execution path relative to Repo Path, e.g. "/src/"
+   - Src path (Required): The source code library path relative to Repo Path, e.g. "/src/transformers/"
+   - Test Path (Required): The test files path relative to Repo Path, e.g. "/tests/"
+
+3. Set up the corresponding environment according to the repository's documentation and requirements
+
+4. Run following 
 ```
 conda activate {repo_name_env}
-./Generation/Single-Function/Preprocess.sh {repo_name}
+CorePipe/Single-Function/Preprocess.sh repo_name
 ```
 #### Single Function Problem Generation
 1. Development
@@ -120,6 +143,7 @@ conda activate {repo_name_env}
     conda activate {repo_name_env}
     ./Generation/Single-Function/BugFix_generate.sh {repo_name} {gen_model} {rewrite_model}
     ```
+    
 #### Multi-Function Problem Generation
 1. Development
     ```
@@ -142,44 +166,7 @@ conda activate {repo_name_env}
     ./Generation/Multi-Function/function_generate_difficult.sh {repo_name}
     ```
 
-### Evaluation
-#### Single Function Problem Evaluation
-1. Development
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Single-Function/Development_evaluate.sh
-    ```
-2. BugFix
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Single-Function/Debug_evaluate.sh
-    ```
-3. TDD
-    ```
-    conda activate {repo_name_env}
-    ./Evaluate/Single-Function/TDD_evaluate.sh
-    ```
-#### Multi Function Problem Evaluation
-1. Development
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Multi-Function/function_test_run.sh {repo_name} {model_name}
-    ```
-2. TDD
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Multi-Function/function_test_tdd_run.sh {repo_name} {model_name}
-    ```
-3. BugFix
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Multi-Function/function_test_debug_run.sh {repo_name} {model_name}
-    ```
-4. Difficult
-    ```
-    conda activate {repo_name_env}
-    ./Evaluation/Multi-Function/function_test_difficult_run.sh {repo_name} {model_name}
-    ```
+
 
 ## License
 This project is licensed under the MIT License.

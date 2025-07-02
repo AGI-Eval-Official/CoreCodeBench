@@ -122,6 +122,8 @@ def get_response(chat_message, model, gen_kwargs=None):
                 stream=False
         )
         return raw_response.choices[0].message.content
+    elif model == 'llama3.1-70b-instruct':
+        
     else:
         gen_kwargs = {'max_length': 8000, 'temperature': 0.0, 'top_p': 0.00, 'stream': False}
         raw_response = client.chat.completions.create(

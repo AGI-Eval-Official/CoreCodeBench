@@ -4,7 +4,7 @@
         "repo_name": "transformers",
         "import_name": "transformers",
         "github_url": "https://github.com/huggingface/transformers",
-        "conda_env_name": "sandbox",
+        "conda_env_name": "transformers",
         "repo_path": "Source_Copy/transformers/",
         "_running_path": "/src/",
         "_src_path": "/src/transformers/",
