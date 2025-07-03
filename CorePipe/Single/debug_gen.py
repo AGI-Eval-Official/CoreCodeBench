@@ -12,6 +12,8 @@ import CorePipe.config as config
 import argparse
 import random
 from tqdm import tqdm
+import tempfile
+import shutil
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -72,14 +74,14 @@ def generate_buggy_code(testcase, problem, buggy_logic_response):
         except:
             return None
 
-        source_code_path = os.path.join(repo_args['repo_running_path'], testcase['origin_file']) 
+        source_code_path = os.path.join(args.repo_args['repo_running_path'], testcase['origin_file']) 
         with open(source_code_path, 'r') as f:
             source_code = f.read().splitlines()
         prompt = '\n'.join(source_code[:testcase["prob_info"]['key_block_start_lineno'] - 1]) \
                             + modified_problem + \
                 '\n'.join(source_code[testcase["prob_info"]['key_block_end_lineno']:])
         if args.gen_model == 'mix':
-            gen_model = random.choice(gen_models)
+            gen_model = random.choice(args.gen_models)
         else:
             gen_model = args.gen_model
         buggy_code, response = complete_code(prompt, gen_model)
@@ -120,13 +122,13 @@ def retest(args, testcase, tmp_repo_path):
     prefix = '\n'.join(source_code[:testcase['prob_info']['func_start_lineno'] - 1])
     suffix =  '\n'.join(source_code[testcase['prob_info']['func_end_lineno']:])
     new_code = prefix + testcase['prob_info']['new_func_code'].replace('<buggy_code_start_here>','').replace('<buggy_code_end_here>','') + suffix
-    tmp_running_file = source_path.replace(repo_args['repo_path'], tmp_repo_path)
+    tmp_running_file = source_path.replace(args.repo_args['repo_path'], tmp_repo_path)
     with open(tmp_running_file, 'w') as f:
         f.write(new_code)
     test_path = os.path.join(tmp_repo_path, testcase['test_list'][0])
-    log_path = os.path.join(args.buggy_logic_dir, 'retest_{}.log'.format(testcase['id']))
+    log_path = os.path.join(args.debug_dir, 'retest_{}.log'.format(testcase['id']))
     env = os.environ.copy()
-    running_path = repo_args['repo_running_path'].replace(repo_args['repo_path'], tmp_repo_path)
+    running_path = args.repo_args['repo_running_path'].replace(args.repo_args['repo_path'], tmp_repo_path)
     env["PYTHONPATH"] =running_path
     env["http_proxy"] = "http://10.229.18.30:8412"
     env["https_proxy"] = "http://10.229.18.30:8412"
@@ -213,24 +215,21 @@ if __name__ == '__main__':
                 f.write(json.dumps(buggy_testcase, ensure_ascii=False) + '\n')
                 
                    
-    assert os.path.exists(os.path.join(args.buggy_logic_dir, 'buggy_logic.jsonl'))
 
     print('Generate model test passed!')
     print('Generating buggy code....')
     buggy_testcases = utils.load_jsonl_to_dict(os.path.join(args.debug_dir, 'buggy_logic.jsonl'), 'id')
-    if os.path.exists(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl')):
-        os.remove(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl'))
+    if not os.path.exists(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl')):
+        with open(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl'),  'a', encoding='utf-8') as f:
+            for id, testcase in buggy_testcases.items():
+                problem = testcase['problem']
+                buggy_logic_response = testcase['buggy_logic_response']
+                buggy_testcase = generate_buggy_code(testcase, problem, buggy_logic_response)
+                if buggy_testcase:
+                    json_line = json.dumps(buggy_testcase, ensure_ascii=False)
+                    f.write(json_line + '\n')
+                    print(buggy_testcase['id'])
         
-    with open(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl'),  'a', encoding='utf-8') as f:
-        for id, testcase in buggy_testcases.items():
-            problem = testcase['problem']
-            buggy_logic_response = testcase['buggy_logic_response']
-            buggy_testcase = generate_buggy_code(testcase, problem, buggy_logic_response)
-            if buggy_testcase:
-                json_line = json.dumps(buggy_testcase, ensure_ascii=False)
-                f.write(json_line + '\n')
-                print(buggy_testcase['id'])
-    
     print('Retesting....')
     
     # copy temp test file
@@ -243,11 +242,11 @@ if __name__ == '__main__':
     
     
     # retest
-    testcase_jsonl = utils.load_jsonl_to_dict(os.path.join(args.buggy_logic_dir, 'first_gen_testcases.jsonl'), 'id') 
+    testcase_jsonl = utils.load_jsonl_to_dict(os.path.join(args.debug_dir, 'first_gen_testcases.jsonl'), 'id') 
     valid_buggy_testcases = []
     try:
         for id, testcase in testcase_jsonl.items():
-            retest_flag, scores = retest(testcase, temp_copy_path)
+            retest_flag, scores = retest(args, testcase, temp_copy_path)
             if retest_flag:
                 testcase['pytest_info']['base_passed_num'] = scores[0]
                 valid_buggy_testcases.append(testcase)

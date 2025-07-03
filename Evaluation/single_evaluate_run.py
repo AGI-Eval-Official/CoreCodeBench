@@ -34,7 +34,7 @@ def setup_arg_parser():
     return parser
           
 
-def evaluate_gen_code(id, pytest_info, repo_name, origin_file, test_path_list, tmp_repo_path, response_line, log_dir, score_dir, model):
+def evaluate_gen_code(id, pytest_info, prob_info, repo_name, origin_file, test_path_list, tmp_repo_path, response_line, log_dir, score_dir, model):
     repo_args = utils.get_repo_args(repo_name)
     tmp_running_path = repo_args['repo_running_path'].replace(repo_args['repo_path'], tmp_repo_path)
 
@@ -186,7 +186,7 @@ if __name__ == "__main__":
             pytest_info = testcase['pytest_info']
             if f'{typ}-{id}' in generated_testcases:
                 continue
-            evaluate_gen_code(id, pytest_info, args.repo_name, origin_file, test_path_list, temp_copy_path, response_line, log_dir, score_dir, args.model)
+            evaluate_gen_code(id, pytest_info, prob_info, args.repo_name, origin_file, test_path_list, temp_copy_path, response_line, log_dir, score_dir, args.model)
         logging.info(f"Evaluation for {args.repo_name}-{args.type} is finished!")
     
     finally:

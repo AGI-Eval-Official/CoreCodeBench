@@ -124,7 +124,12 @@ def get_response(chat_message, model, gen_kwargs=None):
         return raw_response.choices[0].message.content
     elif model == 'llama3.1-70b-instruct':
         gen_kwargs = gen_kwargs = {'temperature': 0.0, 'top_k': 1, 'top_p': 0.0, 'do_sample': False, 'max_length': 8000}
-        customize_inference_ip = '10.166.89.66'
+
+
+
+
+
+        customize_inference_ip = '10.166.95.56'
         import requests
         import json
         import time

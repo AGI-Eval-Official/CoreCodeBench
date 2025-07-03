@@ -3,6 +3,8 @@
 repo_name=""
 model=""
 validate_model=""
+gen_model="mix"
+rewrite_model="mix"
 
 # Parse named arguments
 while [ $# -gt 0 ]; do
@@ -15,6 +17,12 @@ while [ $# -gt 0 ]; do
             ;;
         --validate_model=*)
             validate_model="${1#*=}"
+            ;;
+        --gen_model=*)
+            gen_model="${1#*=}"
+            ;;
+        --rewrite_model=*)
+            rewrite_model="${1#*=}"
             ;;
         *)
             echo "Unknown parameter: $1"
@@ -31,3 +39,4 @@ python -m CorePipe.Single.dev_retest --repo_name $repo_name
 python -m CorePipe.Single.TDD_gen --repo_name $repo_name
 
 # Single-BugFix
+python -m CorePipe.Single.debug_gen --repo_name $repo_name --gen_model $gen_model --rewrite_model $rewrite_model

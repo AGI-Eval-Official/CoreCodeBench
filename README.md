@@ -120,31 +120,19 @@ To build a new repository into 6 types of CoreCodeBench problems:
 
 3. Set up the corresponding environment according to the repository's documentation and requirements. Subsequently, install `pip install python-call-graph` and copy the environments/pycallgraph directory to replace the pycallgraph directory in your conda environment (use `python -c "import pycallgraph; print(pycallgraph.__file__)"` to find directory). 
 > **Note** If `dot` is not available (run `which dot`), run `conda install graphviz` to install it.
+4. Implement model response function in CorePipe.utils.get_response(); Change paths and configs in CorePipe.config.
 
-4. Run following 
+5. Run following 
 ```
 conda activate {repo_name_env}
 CorePipe/Single-Function/Preprocess.sh repo_name
 ```
-#### Single Function Problem Generation
-1. Development
-    ```
-    conda activate {repo_name_env}
-    ./Generation/Single-Function/Development_generate.sh {repo_name}
-    ./Generation/Single-Function/Filter.sh {repo_name} {model_name}
-    ```
-2. TDD
-    ```
-    conda activate {repo_name_env}
-    ./Generation/Single-Function/TDD_generate.sh {repo_name}
 
-    ```
-3. Debug
-    ```
-    conda activate {repo_name_env}
-    ./Generation/Single-Function/BugFix_generate.sh {repo_name} {gen_model} {rewrite_model}
-    ```
-    
+#### Single Function Problem Generation
+Run following
+`CorePipe/Single/single_gen.sh --repo_name={repo_name} --model={model_name} --validate_model={validate_model(for Dev)} --gen_model={gen_model(for BugFix)} --rewrite_model={rewrite_model(for BugFix)}`.
+Single Function Problem will be generated in `testcases/{repo_name}/single`.  
+
 #### Multi-Function Problem Generation
 1. Development
     ```
