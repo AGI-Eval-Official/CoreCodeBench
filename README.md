@@ -130,10 +130,13 @@ CorePipe/Single-Function/Preprocess.sh repo_name
 
 #### Single Function Problem Generation
 Run following
-`CorePipe/Single/single_gen.sh --repo_name={repo_name} --model={model_name} --validate_model={validate_model(for Dev)} --gen_model={gen_model(for BugFix)} --rewrite_model={rewrite_model(for BugFix)}`.
+```
+CorePipe/Single/single_gen.sh --repo_name={repo_name} --model={model_name} --validate_model={validate_model(for Dev)} --gen_model={gen_model(for BugFix)} --rewrite_model={rewrite_model(for BugFix)}
+```
 Single Function Problem will be generated in `testcases/{repo_name}/single`.  
 
 #### Multi-Function Problem Generation
+
 1. Development
     ```
     conda activate {repo_name_env}

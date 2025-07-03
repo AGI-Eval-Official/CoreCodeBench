@@ -14,4 +14,4 @@ LINE_NUM_LIMIT = 50
 LINE_NUM_MIN = 4
 
 rewrite_models = ['gpt4o', 'claude3.5', 'qwen-plus-latest', 'doubao']
-gen_models = [ 'qwen2.5-7B-Coder',   'longcat-large-32K','deepseek-16B-Coder','gpt4o-mini']
+gen_models = [ 'qwen2.5-7B-Coder','deepseek-16B-Coder','gpt4o-mini']
