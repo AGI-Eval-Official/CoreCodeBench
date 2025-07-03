@@ -118,7 +118,8 @@ To build a new repository into 6 types of CoreCodeBench problems:
    - Src path (Required): The source code library path relative to Repo Path, e.g. "/src/transformers/"
    - Test Path (Required): The test files path relative to Repo Path, e.g. "/tests/"
 
-3. Set up the corresponding environment according to the repository's documentation and requirements
+3. Set up the corresponding environment according to the repository's documentation and requirements. Subsequently, install `pip install python-call-graph` and copy the environments/pycallgraph directory to replace the pycallgraph directory in your conda environment (use `python -c "import pycallgraph; print(pycallgraph.__file__)"` to find directory). 
+> **Note** If `dot` is not available (run `which dot`), run `conda install graphviz` to install it.
 
 4. Run following 
 ```

@@ -5,12 +5,11 @@ import re
 import pandas as pd
 import xlsxwriter
 import json
-from CorePipe.server import LocalClient
 import ast
 from tqdm import tqdm
 import time
 import CorePipe.config as config
-
+from pathlib import Path
 
 def get_repo_args(repo_name):
     repo_info_path = config.repo_info_path
@@ -110,12 +109,13 @@ def extract_code_loose(content):
             return content  # If no code block, return the original string stripped of whitespace
 
 def get_response(chat_message, model, gen_kwargs=None):
-    from openai import OpenAI
-    client = OpenAI(api_key="sk-2134105ebd374660963d161470cee3d4", base_url="https://api.deepseek.com/v1")
-
+    
     if model == 'empty':
         return ''
     elif model == 'deepseek-chat':
+        from openai import OpenAI
+        client = OpenAI(api_key="sk-2134105ebd374660963d161470cee3d4", base_url="https://api.deepseek.com/v1")
+
         gen_kwargs = {'max_length': 8000, 'temperature': 0.0, 'top_p': 0.01, 'stream': False}
         raw_response = client.chat.completions.create(
                 model=model,
@@ -127,16 +127,103 @@ def get_response(chat_message, model, gen_kwargs=None):
         )
         return raw_response.choices[0].message.content
     else:
-        gen_kwargs = {'max_length': 8000, 'temperature': 0.0, 'top_p': 0.00, 'stream': False}
-        raw_response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": chat_message}],
-                max_tokens=gen_kwargs['max_length'],
-                temperature=gen_kwargs['temperature'],
-                top_p=gen_kwargs['top_p'],
-                stream=False
-        )
-        return raw_response.choices[0].message.content
+        gen_kwargs = {'temperature': 0.0, 'top_k': 1, 'top_p': 0.0, 'do_sample': False, 'max_length': 4096}
+        customize_inference_ip = '10.148.144.230'
+        import requests
+        import json
+        import time
+
+        class LocalClient():
+            def __init__(self):
+                pass
+            def generate(self, ip, prompt, wait=False, **gen_kwargs):
+                url = f"http://{ip}:8080"
+                data = {
+                    "prompt": prompt,
+                    "max_new_tokens": gen_kwargs["max_length"],
+                    "do_sample": gen_kwargs["do_sample"],
+                }
+                if gen_kwargs["do_sample"]:
+                    if "temperature" in gen_kwargs:
+                        data["temperature"] = gen_kwargs["temperature"]
+                    if "top_k" in gen_kwargs:
+                        data["top_k"] = gen_kwargs["top_k"]
+                    if "top_p" in gen_kwargs:
+                        data["top_p"] = gen_kwargs["top_p"]
+                payload = json.dumps(data)
+                headers = {
+                    'Content-Type': 'application/json'
+                }
+                cnt = 0
+                total = 1
+                if wait:
+                    total = 20
+                while True:
+                    try:
+                        response = requests.request("POST", url, headers=headers, data=payload)
+                        response = response.json()
+                        if "completions" in response and response["completions"] is not None:
+                            return response["completions"]
+                        else:
+                            return response["result"]
+                    except Exception as e:
+                        print(e)
+                        cnt = cnt + 1
+                        if cnt < total:
+                            print(f"服务器ip: {ip}未返回结果或异常，若这是第一条请求，可能是服务还没启动成功.等待10秒后重试... 已重试次数:{cnt}/{total}", flush=True)
+                            time.sleep(10)  # 等待5秒
+                            continue
+                        raise e
+        raw_response = LocalClient().generate(customize_inference_ip, chat_message, wait=True, **gen_kwargs)
+        return raw_response[0]["text"]
+
+def find_diff_segments(path1, path2):
+    """找到两个路径中不同的段落"""
+    parts1 = Path(path1).parts
+    parts2 = Path(path2).parts
+    
+    # 找到第一个不同的索引
+    start = None
+    for i, (p1, p2) in enumerate(zip(parts1, parts2)):
+        if p1 != p2:
+            start = i
+            break
+    
+    if start is None:
+        return None, None  # 路径完全相同
+    
+    # 找到后续第一个相同的目录
+    end = None
+    for j in range(start, min(len(parts1), len(parts2))):
+        if parts1[j] == parts2[j]:
+            end = j
+            break
+    
+    return (start, end) if end else (start, None)
+
+def replace_path_segment(original_path, reference_path, replacement_path):
+    """动态替换路径段"""
+    orig_parts = Path(original_path).parts
+    ref_parts = Path(reference_path).parts
+    repl_parts = Path(replacement_path).parts
+    
+    # 找到差异段落
+    start, end = find_diff_segments(Path(original_path), Path(reference_path))
+    
+    if not start:
+        return str(original_path)  # 没有需要替换的部分
+    
+    # 确定替换范围
+    replace_range = slice(start, end)
+    
+    # 构建新路径
+    new_parts = (
+        repl_parts[:start] +  # 保留替换路径前缀
+        repl_parts[start:end] +  # 替换差异部分
+        orig_parts[end:]  # 保留原始路径后缀
+    )
+    
+    return str(Path(*new_parts))
         
    
 

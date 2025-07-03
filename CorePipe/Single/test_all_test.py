@@ -1,17 +1,11 @@
-import subprocess
-import re
-import ast
-import textwrap  # 用于移除额外的缩进
 import json
 import os
 import argparse
-# from variable_tracker import extract_lvalues_and_rvalues, extract_lvalues_new
-from CorePipe.utils import read_log
 import CorePipe.config as config
 from tqdm import tqdm
 import pandas as pd
-import argparse
 import logging
+from CorePipe.utils import read_log
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -30,7 +24,7 @@ if __name__ == "__main__":
 
     if repo_name in repo_info:
         repo_data = repo_info[repo_name]
-        repo_path = os.path.join(config.repo_path, args.repo_name)
+        repo_path = os.path.join(config.root_path, repo_data.get('repo_path', ''))
         running_path_relative = repo_data.get('_running_path', '').lstrip('/')
         repo_running_path = os.path.join(repo_path, running_path_relative)
     else:
@@ -43,7 +37,7 @@ if __name__ == "__main__":
             data = json.loads(line.strip())
             test_file = data.get("test_file", "")
             origin_file = data.get("origin_file", "")
-            test_path = test_file
+            test_path = os.path.join(repo_path, test_file)
             file_name = origin_file.split('/')[-1].replace('.py', '')
 
             logging.info("Test Path: %s", test_path)
@@ -67,11 +61,11 @@ if __name__ == "__main__":
             else:
                 logging.info(exit_code)
                 logging.warning("Test %s exceeded time limit and was terminated.", test_path)
-                passed, skipped, failed = 0, 0, 1  # 设置 failed 为 1
+                passed, skipped, failed = 0, 0, 1  
 
             results_df = results_df._append({'test_id': [test_file], 'passed': [passed], 'skipped': [skipped], 'failed': [failed]}, ignore_index=True)
             
-            if failed == 0 and (passed > 0.5*(passed + skipped + failed)):
+            if failed == 0 and (passed > 0.5*(passed + skipped + failed)): # filter out failed tests 
                 valid_data = {
                     "test_file": test_file,
                     "origin_file": origin_file,

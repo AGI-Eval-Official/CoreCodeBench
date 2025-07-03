@@ -1,0 +1,33 @@
+#!/bin/bash
+# Initialize variables with default values
+repo_name=""
+model=""
+validate_model=""
+
+# Parse named arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --repo_name=*)
+            repo_name="${1#*=}"
+            ;;
+        --model=*)
+            model="${1#*=}"
+            ;;
+        --validate_model=*)
+            validate_model="${1#*=}"
+            ;;
+        *)
+            echo "Unknown parameter: $1"
+    esac
+    shift
+done
+
+# Single-Dev
+python -m CorePipe.Single.dev_gen --repo_name $repo_name --model $model --validate_model $validate_model
+python -m CorePipe.Single.dev_retest --repo_name $repo_name
+
+
+# Single-TDD
+python -m CorePipe.Single.TDD_gen --repo_name $repo_name
+
+# Single-BugFix

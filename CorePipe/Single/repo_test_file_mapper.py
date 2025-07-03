@@ -6,7 +6,7 @@ import json
 import logging
 
 
-def find_origin_files(test_path, src_path, result_path):
+def find_origin_files(test_path, src_path, result_path, repo_path, running_path):
     result = []
     if not os.path.exists(result_path):
         os.makedirs(result_path)
@@ -18,28 +18,29 @@ def find_origin_files(test_path, src_path, result_path):
                     # Remove the 'test_' prefix
                     if test_file.startswith('test_'):
                         candidate_file = test_file[5:]
+                        last_underscore_index = test_file.rfind('_')
+                        if last_underscore_index != -1:
+                            alternative_candidate = test_file[last_underscore_index + 1:]
+                        else:
+                            alternative_candidate = None
                     else:
                         continue
 
                     # Get the directory structure of the test file
                     test_dir = os.path.relpath(root, test_path)
-
                     # Traverse files under src_path directory
                     for src_root, _, src_files in os.walk(src_path):
                         for src_file in src_files:
-                            if src_file == candidate_file:
+                            if src_file == candidate_file or (alternative_candidate and src_file == alternative_candidate):
                                 # Get the directory structure of the source file
-                                src_dir = os.path.relpath(src_root, src_path)
-
-                                # Check if the folder names are the same
-                                if test_dir == src_dir:
-                                    # Match successfully, record the result
-                                    json.dump({
-                                        'test_file': os.path.join(root, test_file),
-                                        'origin_file': os.path.join(src_root, src_file)
-                                    }, f)
-                                    f.write('\n')
-                                    break  # Exit the inner loop after finding a match
+                                test_file_path_whole = os.path.join(test_path, test_dir, test_file)
+                                origin_file_path_whole = os.path.join(src_root, src_file)
+                                json.dump({
+                                    'test_file': os.path.relpath(test_file_path_whole, repo_path),
+                                    'origin_file': os.path.relpath(origin_file_path_whole, running_path)
+                                }, f)
+                                f.write('\n')
+                                break  # Exit the inner loop after finding a match
                         else:
                             continue
                         break  # Exit the outer loop after finding a match
@@ -153,7 +154,6 @@ def determine_test_file_locations(repo_dir):
     
     # Step 2: Create prompt
     prompt = generate_prompt(repo_dir, file_structure)
-    
     # Step 3: Call the model with the generated prompt
     response = utils.get_response(prompt, model='claude3.5')
     
@@ -166,7 +166,6 @@ if __name__ == "__main__":
     parser.add_argument('--repo_name', type=str, default='', help='name of repo')
     args = parser.parse_args()
     repo_name = args.repo_name
-    repo_dir = os.path.join(config.repo_path, args.repo_name)
 
     repo_info_path = config.repo_info_path
     result_path = os.path.join(config.workspace, args.repo_name)
@@ -176,10 +175,11 @@ if __name__ == "__main__":
     if repo_name not in repo_info:
         logging.warning("Repository '%s' not found in the JSON file.", repo_name)
         exit(1)
-
+    
     repo_data = repo_info[repo_name]
-    repo_path = os.path.join(config.repo_path, args.repo_name)
-
+    
+    repo_path = os.path.join(config.root_path, repo_data['repo_path'].lstrip('/'))
+    running_path = os.path.join(repo_path, repo_data['_running_path'].lstrip('/'))
     if '_src_path' in repo_data and '_test_path' in repo_data:
         # Use predefined paths from config
         src_path = os.path.join(repo_path, repo_data['_src_path'].lstrip('/'))
@@ -187,10 +187,10 @@ if __name__ == "__main__":
         logging.info("Using predefined paths from config")
         logging.info("src_path: %s", src_path)
         logging.info("test_path: %s", test_path)
-        find_origin_files(test_path, src_path, result_path)
+        find_origin_files(test_path, src_path, result_path, repo_path, running_path)
     else:
         # Use GPT to determine paths
-        test_file_locations_response = determine_test_file_locations(repo_dir)
+        test_file_locations_response = determine_test_file_locations(repo_path)
 
         if test_file_locations_response.startswith("```") and test_file_locations_response.endswith("```"):
             if test_file_locations_response.startswith("```json"):
@@ -203,11 +203,32 @@ if __name__ == "__main__":
         data = json.loads(test_file_locations_response)
         testcase_dir_mapping = data["testcase_dir_mapping"]
 
+        # 找到test_path中文件最多的一项
+        max_files = 0
+        selected_src_path = None
+        selected_test_path = None
+
         for src_path_relative, test_path_relative in testcase_dir_mapping.items():
             test_path = os.path.join(repo_path, test_path_relative)
-            src_path = os.path.join(repo_path, src_path_relative)
+            file_count = sum([len(files) for _, _, files in os.walk(test_path)])
+            if file_count > max_files:
+                max_files = file_count
+                selected_src_path = src_path_relative
+                selected_test_path = test_path_relative
+
+        if selected_src_path and selected_test_path:
+            # 更新repo_data
+            repo_data['_src_path'] = selected_src_path
+            repo_data['_test_path'] = selected_test_path
+            
+            # 写回文件
+            with open(repo_info_path, 'w') as f:
+                json.dump(repo_info, f, indent=4)
+
+            test_path = os.path.join(repo_path, selected_test_path)
+            src_path = os.path.join(repo_path, selected_src_path)
             logging.info("src_path: %s", src_path)
             logging.info("test_path: %s", test_path)
-            find_origin_files(test_path, src_path, result_path)
+            find_origin_files(test_path, src_path, result_path, repo_path, running_path)
 
     logging.info("result_path: %s", result_path)

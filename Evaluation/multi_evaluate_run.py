@@ -47,6 +47,7 @@ if not temp_copy_path.endswith(os.sep):
 
 logger.info("copy_finished, temp_copy_path: ", temp_copy_path)
 
+print(f"temp_copy_path: {temp_copy_path}")
 
 def set_max_memory():
     import resource
@@ -241,6 +242,7 @@ def test_func(problem_type, repo_name, testcase, tmp_repo_path):
                     f.write(f"Error: {e}\n")
             if os.path.exists(log_dir):
                 passed, skipped, failed = utils.read_log(log_dir)
+                # print(passed, skipped, failed)
             else:
                 passed, skipped, failed = 0, 0, 0
             
@@ -276,9 +278,10 @@ def test_func(problem_type, repo_name, testcase, tmp_repo_path):
         }
     
         
-    #复原
+    # 复原
     for index, name in enumerate(node):
         path = origin_file[index]
+        path = os.path.join(repo_running_path, path)
         file_name = path.split('/')[-1].replace('.py', '')
         src_transformers_index = path.find(find_path)
         file_path = path[src_transformers_index + len(find_path):path.rfind('/')]
@@ -291,6 +294,7 @@ def test_func(problem_type, repo_name, testcase, tmp_repo_path):
             continue
         source_code_path = os.path.join(repo_path, file_path, f'{file_name}.py')
         shutil.copy(source_code_path, source_code_path.replace(repo_running_path, running_path)) 
+    # shutil.copytree(repo_path, tmp_repo_path, dirs_exist_ok=True)
     
     score_file = os.path.join(result_dir, 'multi_scores.csv')
     if not os.path.exists(score_file):
@@ -310,6 +314,4 @@ with open(multi_testcases_path, 'r', encoding='utf-8') as file:
 
         result_df = test_func(problem_type, repo_name, testcase, temp_copy_path)
         
-
-  
 shutil.rmtree(temp_copy_path)
