@@ -114,7 +114,7 @@ def get_response(chat_message, model, gen_kwargs=None):
         return ''
     elif model == 'deepseek-chat':
         from openai import OpenAI
-        client = OpenAI(api_key="sk-2134105ebd374660963d161470cee3d4", base_url="https://api.deepseek.com/v1")
+        client = OpenAI(api_key="sk-yourkey", base_url="https://api.deepseek.com/v1")
 
         gen_kwargs = {'max_length': 8000, 'temperature': 0.0, 'top_p': 0.01, 'stream': False}
         raw_response = client.chat.completions.create(
@@ -127,56 +127,8 @@ def get_response(chat_message, model, gen_kwargs=None):
         )
         return raw_response.choices[0].message.content
     else:
-        gen_kwargs = {'temperature': 0.0, 'top_k': 1, 'top_p': 0.0, 'do_sample': False, 'max_length': 4096}
-        customize_inference_ip = '10.148.144.230'
-        import requests
-        import json
-        import time
-
-        class LocalClient():
-            def __init__(self):
-                pass
-            def generate(self, ip, prompt, wait=False, **gen_kwargs):
-                url = f"http://{ip}:8080"
-                data = {
-                    "prompt": prompt,
-                    "max_new_tokens": gen_kwargs["max_length"],
-                    "do_sample": gen_kwargs["do_sample"],
-                }
-                if gen_kwargs["do_sample"]:
-                    if "temperature" in gen_kwargs:
-                        data["temperature"] = gen_kwargs["temperature"]
-                    if "top_k" in gen_kwargs:
-                        data["top_k"] = gen_kwargs["top_k"]
-                    if "top_p" in gen_kwargs:
-                        data["top_p"] = gen_kwargs["top_p"]
-                payload = json.dumps(data)
-                headers = {
-                    'Content-Type': 'application/json'
-                }
-                cnt = 0
-                total = 1
-                if wait:
-                    total = 20
-                while True:
-                    try:
-                        response = requests.request("POST", url, headers=headers, data=payload)
-                        response = response.json()
-                        if "completions" in response and response["completions"] is not None:
-                            return response["completions"]
-                        else:
-                            return response["result"]
-                    except Exception as e:
-                        print(e)
-                        cnt = cnt + 1
-                        if cnt < total:
-                            print(f"服务器ip: {ip}未返回结果或异常，若这是第一条请求，可能是服务还没启动成功.等待10秒后重试... 已重试次数:{cnt}/{total}", flush=True)
-                            time.sleep(10)  # 等待5秒
-                            continue
-                        raise e
-        raw_response = LocalClient().generate(customize_inference_ip, chat_message, wait=True, **gen_kwargs)
-        return raw_response[0]["text"]
-
+        pass
+        
 def find_diff_segments(path1, path2):
     """找到两个路径中不同的段落"""
     parts1 = Path(path1).parts
