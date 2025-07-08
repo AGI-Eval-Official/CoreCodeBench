@@ -100,7 +100,7 @@ bash Evaluation/multi_evaluate_conda.sh --model=model_name --types=Development,T
 
 ### Generation of CorePipe
 
-![docs/Framework.pdf](https://github.com/AGI-Eval-Official/CoreCodeBench/blob/main/docs/Framework.pdf)
+[![docs/Framework.pdf](https://github.com/AGI-Eval-Official/CoreCodeBench/blob/main/docs/CorePipe.png)](https://github.com/AGI-Eval-Official/CoreCodeBench/blob/main/docs/Framework.pdf)
 
 
 #### Preprocess
@@ -174,6 +174,7 @@ If you find our work helpful,  please cite our paper as follows:
   howpublished = {\url{https://github.com/AGI-Eval-Official/CoreCodeBench/blob/main/docs/CoreCodeBench.pdf}},
   note         = {Accessed: 2024-07-08}
 }
+```
 
 ## Contact
 For questions or feedback, please open an issue or contact fulingyue@sjtu.edu.cn.
