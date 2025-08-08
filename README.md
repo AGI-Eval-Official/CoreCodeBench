@@ -164,6 +164,7 @@ Single Function Problem will be generated in `testcases/{repo_name}/single`.
 This project is licensed under the MIT License.
 
 ## Citation
+Our paper is available now in [arxiv]{https://arxiv.org/abs/2507.05281}.
 If you find our work helpful,  please cite our paper as follows:
 
 ```bibtex
@@ -171,7 +172,7 @@ If you find our work helpful,  please cite our paper as follows:
   title        = {CoreCodeBench: A Configurable Multi-Scenario Repository-Level Benchmark},
   author       = {Lingyue Fu, Hao Guan, Bolun Zhang, Haowei Yuan, Yaoming Zhu, Jun Xu, Zongyu Wang, Lin Qiu, Xunliang Cai, Xuezhi Cao, Weiwen Liu, Weinan Zhang, Yong Yu},
   year         = {2025},
-  howpublished = {\url{https://github.com/AGI-Eval-Official/CoreCodeBench/blob/main/docs/CoreCodeBench.pdf}},
+  howpublished = {\url{https://arxiv.org/abs/2507.05281}},
   note         = {Accessed: 2024-07-08}
 }
 ```
