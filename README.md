@@ -164,7 +164,7 @@ Single Function Problem will be generated in `testcases/{repo_name}/single`.
 This project is licensed under the MIT License.
 
 ## Citation
-Our paper is available now in [arxiv]{https://arxiv.org/abs/2507.05281}.
+Our paper is available now in [arxiv](https://arxiv.org/abs/2507.05281).
 If you find our work helpful,  please cite our paper as follows:
 
 ```bibtex
