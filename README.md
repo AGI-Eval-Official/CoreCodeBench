@@ -140,22 +140,22 @@ Single Function Problem will be generated in `testcases/{repo_name}/single`.
 1. Development
     ```
     conda activate {repo_name_env}
-    ./Generation/Multi-Function/function_generate.sh {repo_name}
+    ./CorePipe/Multi-Function/function_generate.sh {repo_name}
     ```
 2. TDD
     ```
     conda activate {repo_name_env}
-    ./Generation/Multi-Function/function_generate_tdd.sh {repo_name}
+    ./CorePipe/Multi-Function/function_generate_tdd.sh {repo_name}
     ```
 3. BugFix
     ```
     conda activate {repo_name_env}
-    ./Generation/Multi-Function/function_generate_debug.sh {repo_name}
+    ./CorePipe/Multi-Function/function_generate_debug.sh {repo_name}
     ```
 4. Difficult
     ```
     conda activate {repo_name_env}
-    ./Generation/Multi-Function/function_generate_difficult.sh {repo_name}
+    ./CorePipe/Multi-Function/function_generate_difficult.sh {repo_name}
     ```
 
 
