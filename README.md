@@ -40,7 +40,7 @@ CoreCodeBench/
 ### Environment Setup
 We strongly recommend using Docker to get a stable environment and reliable experimental results. Follow the instructions in the [Docker setup guide](https://docs.docker.com/engine/install/) to install Docker on your machine.
 
-#### Docker Environment Setup
+#### Docker Environment Setup (Recommend)
 1. Run `docker pull fulingyue/corecodebench:all` to pull docker from Docker Hub.
 2. Activate docker interactive environment with:
 ```
@@ -60,7 +60,8 @@ We also provide conda version environment setup. However, to prevent incompatibi
 1. Run `environments/all_env_create_conda.sh` to create conda environments.
 2. Run `environments/check_env_conda.sh` and check conda environments.
 
-
+> **Note**: If your cuda version is not compatible with conda's torch version, you can temporarily **disable cuda** in the environment variables.
+> 
 > **Note**: If you encounter errors when checking the langchain environment, it may be due to outdated pytest snapshots. In this case, you'll need to update the snapshots by running `pytest --snapshot-update /workspace/path/to/failing/test/file` inside the Docker container.
 
 
